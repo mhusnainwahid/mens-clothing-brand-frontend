@@ -2,8 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/ui/form-input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import axios from "axios";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -11,24 +18,22 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    role: "",
   });
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name) {
-      newErrors.name = "Name is required";
-    }
+    if (!formData.name) newErrors.name = "Name is required";
 
     if (!formData.email) {
       newErrors.email = "Email is required";
@@ -42,20 +47,27 @@ const Signup = () => {
       newErrors.password = "Password must be at least 6 characters";
     }
 
+    if (!formData.role) {
+      newErrors.role = "Role is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
-      // Mock signup logic
+      const res = await axios.post(
+        `${import.meta.env.VITE_LOCAL_URI}signup`,
+        formData
+      );
       toast({
         title: "Account created successfully!",
         description: "Welcome to Loveable. You can now start shopping.",
       });
-      navigate("/");
+      navigate("/login");
     }
   };
 
@@ -82,7 +94,7 @@ const Signup = () => {
               placeholder="Enter your full name"
               required
             />
-            
+
             <FormInput
               label="Email"
               type="email"
@@ -93,7 +105,7 @@ const Signup = () => {
               placeholder="Enter your email"
               required
             />
-            
+
             <FormInput
               label="Password"
               type="password"
@@ -105,9 +117,32 @@ const Signup = () => {
               required
             />
 
-            <Button 
-              type="submit" 
-              className="w-full bg-brand-charcoal hover:bg-brand-warm-gray"
+            {/* Role Dropdown */}
+            <div className="flex flex-col">
+              <label htmlFor="role" className="text-sm font-medium text-gray-700">
+                Role
+              </label>
+              <select
+                name="role"
+                id="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                required
+              >
+                <option value="">Select role</option>
+                <option value="customer">Customer</option>
+                <option value="vendor">Vendor</option>
+                <option value="admin">Admin</option>
+              </select>
+              {errors.role && (
+                <span className="text-sm text-red-500 mt-1">{errors.role}</span>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-black text-white hover:bg-gray-800"
               size="lg"
             >
               Create Account
@@ -117,8 +152,8 @@ const Signup = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-brand-warm-gray">
               Already have an account?{" "}
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 className="text-brand-accent hover:underline font-medium"
               >
                 Sign in here
@@ -127,8 +162,8 @@ const Signup = () => {
           </div>
 
           <div className="mt-4 text-center">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="text-sm text-brand-warm-gray hover:text-brand-charcoal"
             >
               ← Back to Home

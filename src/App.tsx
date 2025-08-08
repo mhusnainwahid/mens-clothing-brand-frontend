@@ -14,6 +14,9 @@ import Signup from "./pages/Signup";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AuthGuard from "./routes/AuthGuard";
+import IsLogin from "./routes/isLogin";
+
 
 const queryClient = new QueryClient();
 
@@ -25,16 +28,19 @@ const App = () => (
       <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route element={<AuthGuard />} >
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+            </Route>
+            <Route element={<IsLogin />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
