@@ -1,0 +1,75 @@
+import product1 from "@/assets/product-1.jpg";
+import product2 from "@/assets/product-2.jpg";
+import product3 from "@/assets/product-3.jpg";
+
+export const products = [
+  {
+    id: "1",
+    name: "Essential White Dress Shirt",
+    price: 89,
+    originalPrice: 120,
+    image: product1,
+    category: "Shirts",
+    description: "A classic white dress shirt crafted from premium cotton. Perfect for business meetings or special occasions.",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["White", "Light Blue"],
+    isNew: true,
+    isFeatured: true,
+  },
+  {
+    id: "2",
+    name: "Charcoal Wool Sweater",
+    price: 129,
+    image: product2,
+    category: "Sweaters",
+    description: "Luxurious merino wool sweater in charcoal. Sophisticated comfort for the modern gentleman.",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Charcoal", "Navy", "Cream"],
+    isFeatured: true,
+  },
+  {
+    id: "3",
+    name: "Navy Tailored Blazer",
+    price: 249,
+    originalPrice: 320,
+    image: product3,
+    category: "Blazers",
+    description: "Impeccably tailored navy blazer from premium wool blend. The perfect piece for any wardrobe.",
+    sizes: ["36", "38", "40", "42", "44"],
+    colors: ["Navy", "Charcoal", "Black"],
+    isFeatured: true,
+  },
+  {
+    id: "4",
+    name: "Premium Denim Jeans",
+    price: 99,
+    image: product2,
+    category: "Jeans",
+    description: "High-quality denim with a perfect fit. Comfortable and durable for everyday wear.",
+    sizes: ["29", "30", "31", "32", "33", "34", "36"],
+    colors: ["Indigo", "Black", "Light Wash"],
+  },
+  {
+    id: "5",
+    name: "Casual Oxford Shirt",
+    price: 69,
+    image: product1,
+    category: "Shirts",
+    description: "Relaxed oxford shirt perfect for weekend styling. Comfortable cotton blend construction.",
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["White", "Light Blue", "Pink"],
+    isNew: true,
+  },
+  {
+    id: "6",
+    name: "Formal Black Suit Jacket",
+    price: 299,
+    image: product3,
+    category: "Blazers",
+    description: "Sharp formal suit jacket for special occasions. Precision tailoring and premium materials.",
+    sizes: ["36", "38", "40", "42", "44"],
+    colors: ["Black", "Charcoal"],
+  },
+];
+
+export const categories = ["All", "Shirts", "Sweaters", "Blazers", "Jeans"];
