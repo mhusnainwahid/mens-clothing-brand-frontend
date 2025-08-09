@@ -10,7 +10,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -36,8 +35,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Featured Products */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-4">
@@ -63,8 +60,6 @@ const Home = () => {
           </Button>
         </div>
       </section>
-
-      {/* New Arrivals */}
       {newArrivals.length > 0 && (
         <section className="py-16 bg-brand-light-gray">
           <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -88,8 +83,6 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      {/* CTA Section */}
       <section className="py-16 hero-gradient">
         <div className="text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">

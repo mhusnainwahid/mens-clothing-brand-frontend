@@ -10,14 +10,13 @@ import { toast } from "@/hooks/use-toast";
 const Checkout = () => {
   const navigate = useNavigate();
   
-  // Mock order data
   const orderItems = [
     { name: "Essential White Dress Shirt", price: 89, quantity: 2, size: "M" },
     { name: "Charcoal Wool Sweater", price: 129, quantity: 1, size: "L" },
   ];
   
   const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = 0; // Free shipping
+  const shipping = 0;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
@@ -51,13 +50,11 @@ const Checkout = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Mock checkout process
     toast({
       title: "Order placed successfully!",
       description: "You'll receive a confirmation email shortly.",
     });
     
-    // Redirect to a success page (or home for now)
     setTimeout(() => {
       navigate("/");
     }, 2000);
@@ -70,9 +67,7 @@ const Checkout = () => {
         
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Shipping and Payment Forms */}
             <div className="space-y-6">
-              {/* Shipping Information */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-brand-charcoal">
@@ -141,8 +136,6 @@ const Checkout = () => {
                   />
                 </CardContent>
               </Card>
-
-              {/* Payment Information */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center text-brand-charcoal">
@@ -189,15 +182,12 @@ const Checkout = () => {
                 </CardContent>
               </Card>
             </div>
-
-            {/* Order Summary */}
             <div>
               <Card className="sticky top-8">
                 <CardHeader>
                   <CardTitle className="text-brand-charcoal">Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Order Items */}
                   <div className="space-y-3">
                     {orderItems.map((item, index) => (
                       <div key={index} className="flex justify-between items-start">
@@ -211,8 +201,6 @@ const Checkout = () => {
                   </div>
                   
                   <Separator />
-                  
-                  {/* Order Totals */}
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-brand-warm-gray">Subtotal</span>

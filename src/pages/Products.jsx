@@ -50,9 +50,9 @@ const Products = () => {
         </div>
         <div className="mb-8 space-y-4 lg:space-y-0 lg:flex lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
+            {categories.map((category, index) => (
               <Button
-                key={category}
+                key={`${category}-${index}`}
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
