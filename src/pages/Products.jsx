@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import ProductCard from "@/components/products/ProductCard";
 import { FormInput } from "@/components/ui/form-input";
 import { Button } from "@/components/ui/button";
-import axios from 'axios';
+import axios from "axios";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -15,6 +15,7 @@ const Products = () => {
     const fetchAllProducts = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getpro`);
+        console.log(res.data)
         setProducts(res.data);
         const uniqueCategories = Array.from(
           new Set(res.data.map((product) => product.category))
@@ -29,17 +30,20 @@ const Products = () => {
   }, []);
 
   const filteredProducts = products.filter((product) => {
+    const productName = product.name || "";
+    const productDesc = product.desc || product.description || "";
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
     const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      productDesc.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   return (
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+ 
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-4">
             Our Collection
@@ -56,17 +60,17 @@ const Products = () => {
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
-                className={
+                className={`transition-all duration-200 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] ${
                   selectedCategory === category
-                    ? "bg-brand-charcoal hover:bg-brand-warm-gray"
-                    : ""
-                }
+                    ? "bg-brand-charcoal text-white hover:bg-brand-warm-gray"
+                    : "bg-white text-black hover:bg-brand-green hover:text-white"
+                }`}
               >
                 {category}
               </Button>
             ))}
           </div>
-          <div className="relative max-w-md">
+          <div className="relative max-w-md w-full">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-brand-warm-gray" />
             </div>
@@ -75,7 +79,7 @@ const Products = () => {
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 rounded-xl shadow-sm hover:shadow-md focus:shadow-lg transition-all duration-200"
             />
           </div>
         </div>

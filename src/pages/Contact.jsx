@@ -22,13 +22,11 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Mock form submission
     toast({
       title: "Message sent successfully!",
       description: "We'll get back to you within 24 hours.",
     });
-    
-    // Reset form
+
     setFormData({
       name: "",
       email: "",
@@ -50,7 +48,6 @@ const Contact = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl text-brand-charcoal">Send us a Message</CardTitle>

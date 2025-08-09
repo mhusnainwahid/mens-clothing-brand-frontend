@@ -1,148 +1,140 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useSearchParams } from "react-router-dom";
-import axios from "axios";
-
-const FormInput = ({ className = "", ...props }) => {
-    return (
-        <input
-            className={`w-full border border-gray-300 rounded-lg p-3 text-brand-charcoal focus:outline-none focus:ring-2 focus:ring-brand-charcoal ${className}`}
-            {...props}
-        />
-    );
-};
-const FormSelect = ({ className = "", children, ...props }) => {
-    return (
-        <select
-            className={`w-full border border-gray-300 rounded-lg p-3 text-brand-charcoal focus:outline-none focus:ring-2 focus:ring-brand-charcoal ${className}`}
-            {...props}
-        >
-            {children}
-        </select>
-    );
-};
-const FormTextarea = ({ className = "", ...props }) => {
-    return (
-        <textarea
-            className={`w-full border border-gray-300 rounded-lg p-3 text-brand-charcoal focus:outline-none focus:ring-2 focus:ring-brand-charcoal ${className}`}
-            {...props}
-        />
-    );
-};
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const CreateProduct = () => {
+  const [name, setName] = useState('');
+  const [desc, setDesc] = useState('');
+  const [price, setPrice] = useState('');
+  const [image, setImage] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const navigate = useNavigate();
 
-
-    const [productName, setProductName] = useState('')
-    const [price, setPrice] = useState('')
-    const [image, setImage] = useState('')
-    const [imageUrl, setImageUrl] = useState('')
-    const [description, setDescription] = useState('')
-    const [category, setCategory] = useState('')
+    const handleImage = (e) => {
+      setImage(e.target.files[0]);
+    };
+    const vendorId = localStorage.getItem('userId');
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        // console.log(productName,description,price,image,category)
-        const data = new FormData();
-        data.append('productname', productName),
-        data.append('price', price)
-        data.append('description', description)
-        data.append('category', category)
-        data.append('image', image)
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_LOCAL_URI}createpro`, data)
-            console.log(res)
-        } catch (error) {
-            console.log(error)
-        }
-    }
+      try {
+        e.preventDefault();
 
-    return (
-        <div className="min-h-screen bg-brand-light-gray py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8">
-                <h1 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-8 text-center">
-                    Add New Product
-                </h1>
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    <div>
-                        <label className="block text-sm font-medium text-brand-charcoal mb-2">
-                            Product Name
-                        </label>
-                        <FormInput
-                            type="text"
-                            placeholder="Enter product name"
-                            required
-                            value={productName}
-                            onChange={(e) => setProductName(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-brand-charcoal mb-2">
-                            Price
-                        </label>
-                        <FormInput
-                            type="number"
-                            placeholder="Enter price"
-                            required
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-brand-charcoal mb-2">
-                            Category
-                        </label>
-                        <FormSelect
-                            required
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            <option value="">Select category</option>
-                            <option value="shirts">Shirts</option>
-                            <option value="pants">Pants</option>
-                            <option value="jackets">Jackets</option>
-                            <option value="accessories">Accessories</option>
-                        </FormSelect>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-brand-charcoal mb-2">
-                            Description
-                        </label>
-                        <FormTextarea
-                            rows={4}
-                            placeholder="Enter product description"
-                            required
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-brand-charcoal mb-2">
-                            Product Image
-                        </label>
-                        <FormInput
-                            type="file"
-                            accept="image/*"
-                            required
-                            onChange={(e) => setImage(e.target.files[0])}
-                        />
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button
-                            type="submit"
-                            className="bg-black text-white hover:bg-gray-900"
-                            size="lg"
-                        >
-                            Save Product
-                        </Button>
-                        <Button type="reset" variant="outline" size="lg">
-                            Cancel
-                        </Button>
-                    </div>
-                </form>
-            </div>
+        if (!name || !desc || !price || !image) {
+          alert('Please fill all the fields!');
+          return;
+        }
+
+        const imageData = new FormData();
+        imageData.append('image', image);
+
+        const uploadRes = await axios.post(`${import.meta.env.VITE_LOCAL_URI}uploadimage`, imageData);
+        const uploadedImageUrl = uploadRes.data.imageUrl;
+        setImageUrl(uploadedImageUrl);
+
+        const res = await axios.post(`${import.meta.env.VITE_LOCAL_URI}createpro`, {
+          name,
+          desc,
+          price,
+          imageUrl,
+          vendorId
+        });
+
+        if (res.status === 200) {
+          alert('Product created successfully!');
+          setName('');
+          setDesc('');
+          setPrice('');
+          setImage('');
+          setImageUrl('');
+          navigate('/products');
+        }
+      } catch (error) {
+        console.log('Product creation error:', error.message);
+      }
+    };
+
+  return (
+    <div className="min-h-screen bg-brand-light-gray flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-3xl bg-white shadow-xl rounded-3xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+
+        <div className="hero-gradient text-white py-10 px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">Create New Product</h2>
+          <p className="text-lg text-white/80">
+            Showcase your product to the Loveable community
+          </p>
         </div>
-    );
+        <form className="p-8 space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-brand-charcoal font-semibold mb-2">Title</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter product title"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm 
+                         hover:shadow-md hover:scale-[1.01]
+                         focus:outline-none focus:ring-2 focus:ring-brand-charcoal focus:scale-[1.01]
+                         transition-all duration-200 ease-in-out"
+            />
+          </div>
+          <div>
+            <label className="block text-brand-charcoal font-semibold mb-2">Description</label>
+            <textarea
+              rows="3"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              placeholder="Enter product description"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm resize-none
+                         hover:shadow-md hover:scale-[1.01]
+                         focus:outline-none focus:ring-2 focus:ring-brand-charcoal focus:scale-[1.01]
+                         transition-all duration-200 ease-in-out"
+            ></textarea>
+          </div>
+          <div>
+            <label className="block text-brand-charcoal font-semibold mb-2">Price (in $)</label>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Enter price"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm 
+                         hover:shadow-md hover:scale-[1.01]
+                         focus:outline-none focus:ring-2 focus:ring-brand-charcoal focus:scale-[1.01]
+                         transition-all duration-200 ease-in-out"
+            />
+          </div>
+          <div>
+            <label className="block text-brand-charcoal font-semibold mb-2">Product Image</label>
+            <input
+              type="file"
+              onChange={handleImage}
+              className="w-full p-2 border border-gray-300 rounded-xl bg-white shadow-sm
+                         hover:shadow-md hover:scale-[1.01]
+                         focus:outline-none focus:ring-2 focus:ring-brand-charcoal focus:scale-[1.01]
+                         file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded-md 
+                         file:text-sm file:font-semibold file:bg-brand-light-gray 
+                         file:text-brand-charcoal hover:file:bg-brand-warm-gray/20 
+                         transition-all duration-200 ease-in-out"
+            />
+          </div>
+          <div className="pt-4">
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full bg-white text-black border border-gray-300 shadow-md 
+                         hover:hsl(158 36% 37%) hover:text-white hover:shadow-lg 
+                         transform hover:-translate-y-0.5 
+                         transition-all duration-300 ease-in-out"
+            >
+              Submit Product
+            </Button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default CreateProduct;
