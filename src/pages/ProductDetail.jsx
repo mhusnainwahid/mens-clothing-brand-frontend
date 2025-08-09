@@ -16,6 +16,8 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const userId = localStorage.getItem("userId");
+
   useEffect(() => {
     const fetchAProduct = async () => {
       try {
@@ -58,21 +60,49 @@ const ProductDetail = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    if (!selectedSize || !selectedColor) {
+  const handleAddToCart = async (product) => {
+    // console.log("Add to Cart clicked:", product);
+
+    // if (!selectedSize || !selectedColor) {
+    //   toast({
+    //     title: "Please select size and color",
+    //     description:
+    //       "Both size and color must be selected before adding to cart.",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_LOCAL_URI}addtocart`,
+        {
+          userId,
+          vendorId: product.vendorId,
+          productId: product._id,
+          quantity,
+          productName: product.product || product.productName,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          size: selectedSize,
+          color: selectedColor,
+        }
+      );
+
+      console.log("Cart API Response:", res.data);
+
       toast({
-        title: "Please select size and color",
-        description:
-          "Both size and color must be selected before adding to cart.",
+        title: "Added to cart!",
+        description: `${product.product || product.productName} has been added to your cart.`,
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong while adding to cart.",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Added to cart!",
-      description: `${product.product} has been added to your cart.`,
-    });
   };
 
   return (
@@ -92,7 +122,7 @@ const ProductDetail = () => {
           <div className="relative">
             <img
               src={product.imageUrl}
-              alt={product.productName}
+              alt={product.product || product.productName}
               className="w-full h-[600px] object-cover rounded-lg"
             />
             {product.isNew && (
@@ -111,7 +141,7 @@ const ProductDetail = () => {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-2">
-                {product.product}
+                {product.product || product.productName}
               </h1>
               <p className="text-lg text-brand-warm-gray">{product.category}</p>
             </div>
@@ -207,11 +237,7 @@ const ProductDetail = () => {
 
             {/* Actions */}
             <div className="space-y-4">
-              <Button
-                onClick={handleAddToCart}
-                className="w-full bg-brand-charcoal hover:bg-brand-warm-gray"
-                size="lg"
-              >
+              <Button variant="outline" className="w-full" size="lg" onClick={() => handleAddToCart(product)}>
                 <ShoppingBag className="h-5 w-5 mr-2" />
                 Add to Cart
               </Button>
