@@ -13,11 +13,11 @@ const ProductCard = ({ product, onAddToCart }) => {
 
   return (
     <div className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-      <Link to={`/products/${product.id}`}>
+      <Link to={`/products/${product._id}`}>
         <div className="relative overflow-hidden">
           <img
-            src={product.image}
-            alt={product.name}
+            src={product.imageUrl}
+            alt={product.productName} 
             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {product.isNew && (
@@ -34,18 +34,20 @@ const ProductCard = ({ product, onAddToCart }) => {
 
         <div className="p-4">
           <h3 className="text-lg font-medium text-brand-charcoal mb-1 group-hover:text-brand-accent transition-colors">
-            {product.name}
+            {product.productName} 
           </h3>
-          <p className="text-sm text-brand-warm-gray mb-2">{product.category}</p>
+          <p className="text-sm text-brand-warm-gray mb-2">
+            {product.desc || "No description available"} 
+          </p>
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-brand-charcoal">
-                ${product.price}
+                Rs. {product.price} 
               </span>
               {product.originalPrice && (
                 <span className="text-sm text-brand-warm-gray line-through">
-                  ${product.originalPrice}
+                  Rs. {product.originalPrice}
                 </span>
               )}
             </div>

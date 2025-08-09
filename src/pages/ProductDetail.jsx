@@ -1,24 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { products } from "@/data/products";
 import { toast } from "@/hooks/use-toast";
+import axios from "axios";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = products.find(p => p.id === id);
 
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
+  const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (!product) {
+  useEffect(() => {
+    const fetchAProduct = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `${import.meta.env.VITE_LOCAL_URI}getpro/${id}`
+        );
+        setProduct(res.data);
+        setError("");
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch product.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading product...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-brand-charcoal mb-4">Product Not Found</h2>
+          <h2 className="text-2xl font-bold text-brand-charcoal mb-4">
+            {error || "Product Not Found"}
+          </h2>
           <Button onClick={() => navigate("/products")}>
             Back to Products
           </Button>
@@ -31,24 +62,24 @@ const ProductDetail = () => {
     if (!selectedSize || !selectedColor) {
       toast({
         title: "Please select size and color",
-        description: "Both size and color must be selected before adding to cart.",
+        description:
+          "Both size and color must be selected before adding to cart.",
         variant: "destructive",
       });
       return;
     }
-    
+
     toast({
       title: "Added to cart!",
-      description: `${product.name} has been added to your cart.`,
+      description: `${product.product} has been added to your cart.`,
     });
   };
 
   return (
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Back Button */}
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate(-1)}
           className="mb-6"
         >
@@ -60,8 +91,8 @@ const ProductDetail = () => {
           {/* Product Image */}
           <div className="relative">
             <img
-              src={product.image}
-              alt={product.name}
+              src={product.imageUrl}
+              alt={product.productName}
               className="w-full h-[600px] object-cover rounded-lg"
             />
             {product.isNew && (
@@ -80,12 +111,11 @@ const ProductDetail = () => {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-2">
-                {product.name}
+                {product.product}
               </h1>
               <p className="text-lg text-brand-warm-gray">{product.category}</p>
             </div>
 
-            {/* Price */}
             <div className="flex items-center space-x-4">
               <span className="text-2xl font-bold text-brand-charcoal">
                 ${product.price}
@@ -97,22 +127,27 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {/* Description */}
             <p className="text-brand-warm-gray leading-relaxed">
-              {product.description}
+              {product.desc}
             </p>
 
-            {/* Size Selection */}
+            {/* Sizes */}
             <div>
-              <h3 className="text-lg font-medium text-brand-charcoal mb-3">Size</h3>
+              <h3 className="text-lg font-medium text-brand-charcoal mb-3">
+                Size
+              </h3>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
+                {product?.sizes?.map((size) => (
                   <Button
                     key={size}
                     variant={selectedSize === size ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSelectedSize(size)}
-                    className={selectedSize === size ? "bg-brand-charcoal hover:bg-brand-warm-gray" : ""}
+                    className={
+                      selectedSize === size
+                        ? "bg-brand-charcoal hover:bg-brand-warm-gray"
+                        : ""
+                    }
                   >
                     {size}
                   </Button>
@@ -120,17 +155,23 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Color Selection */}
+            {/* Colors */}
             <div>
-              <h3 className="text-lg font-medium text-brand-charcoal mb-3">Color</h3>
+              <h3 className="text-lg font-medium text-brand-charcoal mb-3">
+                Color
+              </h3>
               <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
+                {product?.colors?.map((color) => (
                   <Button
                     key={color}
                     variant={selectedColor === color ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSelectedColor(color)}
-                    className={selectedColor === color ? "bg-brand-charcoal hover:bg-brand-warm-gray" : ""}
+                    className={
+                      selectedColor === color
+                        ? "bg-brand-charcoal hover:bg-brand-warm-gray"
+                        : ""
+                    }
                   >
                     {color}
                   </Button>
@@ -140,7 +181,9 @@ const ProductDetail = () => {
 
             {/* Quantity */}
             <div>
-              <h3 className="text-lg font-medium text-brand-charcoal mb-3">Quantity</h3>
+              <h3 className="text-lg font-medium text-brand-charcoal mb-3">
+                Quantity
+              </h3>
               <div className="flex items-center space-x-3">
                 <Button
                   variant="outline"
@@ -149,7 +192,9 @@ const ProductDetail = () => {
                 >
                   -
                 </Button>
-                <span className="text-lg font-medium w-8 text-center">{quantity}</span>
+                <span className="text-lg font-medium w-8 text-center">
+                  {quantity}
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
@@ -160,7 +205,7 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Actions */}
             <div className="space-y-4">
               <Button
                 onClick={handleAddToCart}
@@ -176,7 +221,7 @@ const ProductDetail = () => {
               </Button>
             </div>
 
-            {/* Product Info */}
+            {/* Extra Info */}
             <div className="border-t border-border pt-6 space-y-4">
               <div className="text-sm text-brand-warm-gray">
                 <p>• Free shipping on orders over $100</p>

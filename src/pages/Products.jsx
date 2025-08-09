@@ -14,13 +14,20 @@ const Products = () => {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getpro`);
-        console.log(res.data)
+        const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getallpro`);
+        console.log(res.data);
         setProducts(res.data);
+
+        
         const uniqueCategories = Array.from(
-          new Set(res.data.map((product) => product.category))
+          new Set(
+            res.data
+              .map((product) => product.category || null)
+              .filter((cat) => cat) 
+          )
         );
-        setCategories(["All", ...uniqueCategories]);
+
+        setCategories(uniqueCategories.length > 0 ? ["All", ...uniqueCategories] : ["All"]);
       } catch (error) {
         console.log("Products can't fetch: ", error);
       }
@@ -30,20 +37,19 @@ const Products = () => {
   }, []);
 
   const filteredProducts = products.filter((product) => {
-    const productName = product.name || "";
-    const productDesc = product.desc || product.description || "";
+    const name = product.productName || ""; 
+    const desc = product.desc || product.description || "";
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
     const matchesSearch =
-      productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      productDesc.toLowerCase().includes(searchTerm.toLowerCase());
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      desc.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   return (
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
- 
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-4">
             Our Collection

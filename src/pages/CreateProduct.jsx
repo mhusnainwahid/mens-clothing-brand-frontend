@@ -8,7 +8,6 @@ const CreateProduct = () => {
   const [desc, setDesc] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
   const navigate = useNavigate();
 
     const handleImage = (e) => {
@@ -29,14 +28,14 @@ const CreateProduct = () => {
         imageData.append('image', image);
 
         const uploadRes = await axios.post(`${import.meta.env.VITE_LOCAL_URI}uploadimage`, imageData);
+        // console.log(uploadRes.data.imageUrl)
         const uploadedImageUrl = uploadRes.data.imageUrl;
-        setImageUrl(uploadedImageUrl);
-
+        // console.log(uploadedImageUrl)
         const res = await axios.post(`${import.meta.env.VITE_LOCAL_URI}createpro`, {
-          name,
+          productName:name,
           desc,
           price,
-          imageUrl,
+          imageUrl:uploadedImageUrl,
           vendorId
         });
 
@@ -46,7 +45,6 @@ const CreateProduct = () => {
           setDesc('');
           setPrice('');
           setImage('');
-          setImageUrl('');
           navigate('/products');
         }
       } catch (error) {
