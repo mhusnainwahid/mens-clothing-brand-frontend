@@ -7,7 +7,6 @@ import { products } from "@/data/products";
 const Cart = () => {
   const navigate = useNavigate();
   
-  // Mock cart items - in a real app, this would come from state management
   const [cartItems, setCartItems] = useState([
     {
       product: products[0],
@@ -64,7 +63,7 @@ const Cart = () => {
         <h1 className="text-3xl font-bold text-brand-charcoal mb-8">Shopping Cart</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
+
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item, index) => (
               <div key={`${item.product.id}-${item.size}-${item.color}`} className="bg-white rounded-lg border border-border p-6">
@@ -118,7 +117,6 @@ const Cart = () => {
             ))}
           </div>
           
-          {/* Order Summary */}
           <div className="bg-brand-light-gray rounded-lg p-6 h-fit">
             <h2 className="text-xl font-bold text-brand-charcoal mb-4">Order Summary</h2>
             
