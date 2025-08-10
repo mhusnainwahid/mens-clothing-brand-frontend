@@ -3,10 +3,25 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/products/ProductCard";
 import { products } from "@/data/products";
 import heroImage from "@/assets/hero-image.jpg";
+import { useEffect, useState } from "react";
+import axios from 'axios'
 
 const Home = () => {
+  const [products,setProducts] = useState([])
   const featuredProducts = products.filter(product => product.isFeatured);
   const newArrivals = products.filter(product => product.isNew);
+
+  useEffect(()=>{
+    const fetchProducts = async()=>{
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getallpro`)
+        console.log(res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchProducts()
+  },[])
 
   return (
     <div className="min-h-screen">

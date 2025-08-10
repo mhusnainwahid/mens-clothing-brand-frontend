@@ -89,7 +89,7 @@ const ProductDetail = () => {
         }
       );
 
-      console.log("Cart API Response:", res.data);
+      // console.log("Cart API Response:", res.data);
 
       toast({
         title: "Added to cart!",

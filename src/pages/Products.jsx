@@ -4,6 +4,7 @@ import ProductCard from "@/components/products/ProductCard";
 import { FormInput } from "@/components/ui/form-input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -46,6 +47,8 @@ const Products = () => {
       desc.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  
 
   return (
     <div className="min-h-screen py-8">
