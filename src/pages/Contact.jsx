@@ -5,6 +5,7 @@ import { FormInput } from "@/components/ui/form-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import axios from 'axios'
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -19,20 +20,25 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    toast({
-      title: "Message sent successfully!",
-      description: "We'll get back to you within 24 hours.",
-    });
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_LOCAL_URI}send`, formData)
+      console.log(res.data)
+      toast({
+        title: "Message sent successfully!",
+        description: "We'll get back to you within 24 hours.",
+      });
 
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.log("Error submittinng contact from:", error)
+    }
   };
 
   return (
@@ -63,7 +69,7 @@ const Contact = () => {
                   placeholder="Your full name"
                   required
                 />
-                
+
                 <FormInput
                   label="Email"
                   type="email"
@@ -73,7 +79,7 @@ const Contact = () => {
                   placeholder="your.email@example.com"
                   required
                 />
-                
+
                 <FormInput
                   label="Subject"
                   type="text"
@@ -83,7 +89,7 @@ const Contact = () => {
                   placeholder="What's this about?"
                   required
                 />
-                
+
                 <div>
                   <label className="block text-sm font-medium text-brand-charcoal mb-2">
                     Message
@@ -99,9 +105,9 @@ const Contact = () => {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-brand-charcoal hover:bg-brand-warm-gray"
+                <Button
+                  type="submit"
+                  className="w-full bg-black text-white hover:bg-gray-800"
                   size="lg"
                 >
                   Send Message
@@ -128,7 +134,7 @@ const Contact = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Phone className="h-5 w-5 text-brand-accent mt-1" />
                   <div>
@@ -137,7 +143,7 @@ const Contact = () => {
                     <p className="text-brand-warm-gray">(1-800-568-3225)</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Mail className="h-5 w-5 text-brand-accent mt-1" />
                   <div>
@@ -146,7 +152,7 @@ const Contact = () => {
                     <p className="text-brand-warm-gray">support@loveable.com</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Clock className="h-5 w-5 text-brand-accent mt-1" />
                   <div>
