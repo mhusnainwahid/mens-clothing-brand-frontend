@@ -11,20 +11,22 @@ import axios from "axios";
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { total = 0, subtotal = 0, shipping = 0, cartItems = [] } = location.state || {};
+  const { total = 0, cartItems = [] } = location.state || {};
 
-  const tax = subtotal * 0.08; // Example tax calculation
+  const [subtotal, setSubtotal] = useState(total);
+  const [shipping, setShipping] = useState(0);
+  const tax = subtotal * 0.08;
+  const grandTotal = subtotal + shipping + tax;
 
-  // Redirect if cart data is missing
   useEffect(() => {
-    if (!subtotal || !total || cartItems.length === 0) {
+    if (!total || cartItems.length === 0) {
       toast({
         title: "Cart is empty",
         description: "Please add items to your cart before checkout.",
       });
       navigate("/cart");
     }
-  }, [subtotal, total, cartItems, navigate]);
+  }, [total, cartItems, navigate]);
 
   const [shippingData, setShippingData] = useState({
     firstName: "",
@@ -58,13 +60,13 @@ const Checkout = () => {
   const validateForm = () => {
     for (const [key, value] of Object.entries(shippingData)) {
       if (!value.trim()) {
-        toast({ title: "Missing Information", description: `Please fill out ${key}.` });
+        toast({ title: "Missing Information", description: `Please fill out ${key.replace(/([A-Z])/g, " $1")}.` });
         return false;
       }
     }
     for (const [key, value] of Object.entries(paymentData)) {
       if (!value.trim()) {
-        toast({ title: "Missing Information", description: `Please fill out ${key}.` });
+        toast({ title: "Missing Information", description: `Please fill out ${key.replace(/([A-Z])/g, " $1")}.` });
         return false;
       }
     }
@@ -77,27 +79,22 @@ const Checkout = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_LOCAL_URI}checkout`,
-        {
-          shippingData,
-          paymentData,
-          subtotal,
-          total,
-          shipping,
-          cartItems,
-        }
-      );
-
+      const res = await axios.post(`${import.meta.env.VITE_LOCAL_URI}checkout`, {
+        shippingData,
+        paymentData,
+        subtotal,
+        shipping,
+        tax,
+        grandTotal,
+        cartItems,
+      });
       if (res.status >= 200 && res.status < 300) {
+        console.log(res.data)
         toast({
           title: "Order placed successfully!",
           description: "You'll receive a confirmation email shortly.",
         });
-
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
+        // setTimeout(() => navigate("/"), 2000);
       } else {
         throw new Error("Unexpected server response");
       }
@@ -105,8 +102,7 @@ const Checkout = () => {
       console.error("Checkout error:", error);
       toast({
         title: "Order couldn't be placed!",
-        description:
-          error.response?.data?.message || "There was an error processing your order.",
+        description: error.response?.data?.message || "There was an error processing your order.",
       });
     } finally {
       setLoading(false);
@@ -192,7 +188,7 @@ const Checkout = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-brand-warm-gray">Shipping</span>
-                      <span className="text-brand-accent">{shipping === 0 ? "Free" : `$${shipping}`}</span>
+                      <span className="text-brand-accent">{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-brand-warm-gray">Tax</span>
@@ -203,17 +199,28 @@ const Checkout = () => {
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-brand-charcoal">Total</span>
-                    <span className="text-brand-charcoal">${total.toFixed(2)}</span>
+                    <span className="text-brand-charcoal">${grandTotal.toFixed(2)}</span>
                   </div>
 
-                  <Button
+                  {/* <Button
                     type="submit"
                     disabled={loading}
                     className="w-full bg-brand-charcoal hover:bg-brand-warm-gray"
                     size="lg"
                   >
                     {loading ? "Placing Order..." : "Complete Order"}
+                  </Button> */}
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={loading}
+                    variant="outline"
+                    className="mt-2 w-full cursor-pointer"
+                  >
+                    {loading ? "Placing Order..." : "Complete Order"}
                   </Button>
+
 
                   <div className="flex items-center justify-center text-xs text-brand-warm-gray mt-4">
                     <Shield className="h-4 w-4 mr-1" />

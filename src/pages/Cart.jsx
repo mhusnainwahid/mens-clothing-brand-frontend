@@ -178,7 +178,7 @@ const Cart = () => {
               className="w-full"
               onClick={() =>
                 navigate("/checkout", {
-                  state: { total, subtotal, shipping, cartItems },
+                  state: { total, cartItems },
                 })
               }
             >
