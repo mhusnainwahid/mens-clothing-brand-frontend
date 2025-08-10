@@ -21,8 +21,14 @@ const Cart = () => {
     );
   };
 
-  const removeItem = (index) => {
+  const removeItem = async (index) => {
     setCartItems((prev) => prev.filter((_, i) => i !== index));
+    try {
+      const res = await axios.delete(`${import.meta.env.VITE_LOCAL_URI}deletecartitems/${cartItems[index].productId}`)
+      alert(res.data.message)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const subtotal = cartItems.reduce(
@@ -38,7 +44,7 @@ const Cart = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_LOCAL_URI}getcartitems/${userId}`
         );
-        console.log(res.data.cartItems);
+        // console.log(res.data.cartItems);
         setCartItems(res.data.cartItems || []);
       } catch (error) {
         console.log(error);

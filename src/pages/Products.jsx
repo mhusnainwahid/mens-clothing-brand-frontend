@@ -15,7 +15,7 @@ const Products = () => {
     const fetchAllProducts = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getallpro`);
-        console.log(res.data);
+        // console.log(res.data);
         setProducts(res.data);
 
         
