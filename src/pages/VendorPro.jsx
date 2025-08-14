@@ -1,67 +1,127 @@
 import React, { useState } from 'react'
+import { useEffect } from 'react'
+import axios from 'axios'
 
 const VendorPro = () => {
 
+  const [product,setProduct] = useState([])
+  const vendorId = localStorage.getItem('userId')
+
+  useEffect(()=>{
+    const fetchVendorPro = async() =>{
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getvendorpro/${vendorId}`)
+        // console.log(res.data)
+        setProduct(res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchVendorPro()
+  },[])
+
+  const  handleDelete = async (id) =>{
+    try {
+      await axios.delete(`${import.meta.env.VITE_LOCAL_URI}deletepro/${id}`)
+      alert('product delete successfully!')
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-brand-charcoal mb-4">
-            Your Collection
-          </h1>
-          <p className="text-lg text-brand-warm-gray">
-            Discover our complete range of premium men's fashion
-          </p>
-        </div>
-        <div className="mb-8 space-y-4 lg:space-y-0 lg:flex lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category, index) => (
-              <Button
-                key={`${category}-${index}`}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className={`transition-all duration-200 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] ${
-                  selectedCategory === category
-                    ? "bg-brand-charcoal text-white hover:bg-brand-warm-gray"
-                    : "bg-white text-black hover:bg-brand-green hover:text-white"
-                }`}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-          <div className="relative max-w-md w-full">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-brand-warm-gray" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-10 px-4">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Your Products</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {product.map((product) => (
+          <div key={product._id} className="bg-white shadow-lg hover:shadow-2xl transition-shadow rounded-2xl overflow-hidden flex flex-col border border-gray-200">
+            <div className="overflow-hidden">
+              <img
+                src={product.imageUrl || "https://via.placeholder.com/300x200"}
+                alt={product.name}
+                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+              />
             </div>
-            <FormInput
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 rounded-xl shadow-sm hover:shadow-md focus:shadow-lg transition-all duration-200"
-            />
+            <div className="p-5 flex flex-col flex-grow">
+              <h2 className="text-2xl font-semibold text-center text-gray-800">{product.name}</h2>
+              <p className="text-gray-600 text-sm mt-3 text-justify line-clamp-4">
+                {product.desc || "No description provided."}
+              </p>
+              <p className="text-lg text-blue-600 font-bold mt-4">PKR {product.price}</p>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <button
+                  // onClick={() => openModal(product)}
+                  className="w-full bg-gradient-to-r from-green-400 to-green-500 text-white py-2 rounded-lg hover:from-green-500 hover:to-green-600 transition-all font-medium shadow-md hover:shadow-lg"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product._id)}
+                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-2 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all font-medium shadow-md hover:shadow-lg"
+                >
+                  Delete
+                </button>
+                {/* <form onSubmit={handleUpdate}>
+                  {isModalOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4">
+                      <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 md:p-8 transition-all">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Update Product</h2>
+
+                        <div className="space-y-4">
+                          <input
+                            name="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Product Name"
+                          />
+                          <input
+                            name="description"
+                            value={desc}
+                            onChange={(e) => setDesc(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Description"
+                          />
+                          <input
+                            name="price"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Price"
+                            type="number"
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                          <button
+                            type="button"
+                            onClick={closeModal}
+                            className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400 transition"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </form> */}
+
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-xl font-medium text-brand-charcoal mb-2">
-              No products found
-            </h3>
-            <p className="text-brand-warm-gray">
-              Try adjusting your search or filter criteria
-            </p>
-          </div>
-        )}
+        ))}
       </div>
     </div>
-  );
+  )
+
+
 }
 
 export default VendorPro

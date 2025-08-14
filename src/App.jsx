@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import AuthGuard from "./routes/AuthGuard";
 import IsLogin from "./routes/IsLogin";
 import CreateProduct from "./pages/CreateProduct";
+import VendorPro from "./pages/VendorPro";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route element={<AuthGuard />} >
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/getvendorpro" element={<VendorPro />} />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/createproduct" element={<CreateProduct />} />

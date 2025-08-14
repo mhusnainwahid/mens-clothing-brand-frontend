@@ -17,7 +17,6 @@ const Home = () => {
       if (!categories[product.category]) {
         categories[product.category] = [];
       }
-      // Sort by date (optional if API returns latest first)
       categories[product.category].push(product);
     });
 
@@ -96,7 +95,7 @@ const Home = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product._id} product={product} />
           ))}
         </div>
 
@@ -124,7 +123,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {categoryProducts[category].map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product._id} product={product} />
             ))}
           </div>
         </section>
@@ -145,7 +144,7 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {newArrivals.slice(0, 2).map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product._id} product={product} />
               ))}
             </div>
           </div>
