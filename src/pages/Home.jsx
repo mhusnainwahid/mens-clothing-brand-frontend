@@ -1,30 +1,56 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/products/ProductCard";
-import { products } from "@/data/products";
 import heroImage from "@/assets/hero-image.jpg";
 import { useEffect, useState } from "react";
-import axios from 'axios'
+import axios from "axios";
 
 const Home = () => {
-  const [products,setProducts] = useState([])
-  const featuredProducts = products.filter(product => product.isFeatured);
-  const newArrivals = products.filter(product => product.isNew);
+  const [products, setProducts] = useState([]);
+  const featuredProducts = products.filter((product) => product.isFeatured);
+  const newArrivals = products.filter((product) => product.isNew);
 
-  useEffect(()=>{
-    const fetchProducts = async()=>{
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_LOCAL_URI}getallpro`)
-        console.log(res.data)
-      } catch (error) {
-        console.log(error)
+  // Function: Get latest products per category
+  const getLatestByCategory = (products) => {
+    const categories = {};
+    products.forEach((product) => {
+      if (!categories[product.category]) {
+        categories[product.category] = [];
       }
-    }
-    fetchProducts()
-  },[])
+      // Sort by date (optional if API returns latest first)
+      categories[product.category].push(product);
+    });
+
+    // Slice only 2 from each category
+    Object.keys(categories).forEach((cat) => {
+      categories[cat] = categories[cat]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 2);
+    });
+
+    return categories;
+  };
+
+  const [categoryProducts, setCategoryProducts] = useState({});
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_LOCAL_URI}getallpro`
+        );
+        setProducts(res.data);
+        setCategoryProducts(getLatestByCategory(res.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="min-h-screen">
+      {/* HERO SECTION */}
       <section className="relative h-[400px] sm:h-[500px] md:h-[600px] flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -38,19 +64,26 @@ const Home = () => {
             Elevate Your Style
           </h1>
           <p className="text-base sm:text-lg md:text-2xl mb-6 sm:mb-8 max-w-2xl mx-auto">
-            Discover premium men's fashion that combines timeless elegance with modern sophistication.
+            Discover premium men's fashion that combines timeless elegance with
+            modern sophistication.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Button asChild variant="hero" size="lg" className="sm:size-xl">
               <Link to="/products">Shop Collection</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="bg-white/10 text-white border-white hover:bg-white/20 sm:size-xl">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="bg-white/10 text-white border-white hover:bg-white/20 sm:size-xl"
+            >
               <Link to="/about">Learn More</Link>
             </Button>
           </div>
         </div>
       </section>
 
+      {/* FEATURED SECTION */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-charcoal mb-3 sm:mb-4">
@@ -63,10 +96,7 @@ const Home = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {featuredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
 
@@ -77,6 +107,30 @@ const Home = () => {
         </div>
       </section>
 
+      {/* CATEGORY-WISE LATEST PRODUCTS */}
+      {Object.keys(categoryProducts).map((category) => (
+        <section
+          key={category}
+          className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+        >
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-charcoal mb-3 sm:mb-4">
+              Latest in {category}
+            </h2>
+            <p className="text-base sm:text-lg text-brand-warm-gray max-w-2xl mx-auto">
+              Check out the newest additions to our {category} collection
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {categoryProducts[category].map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {/* NEW ARRIVALS */}
       {newArrivals.length > 0 && (
         <section className="py-12 sm:py-16 bg-brand-light-gray">
           <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -91,23 +145,22 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {newArrivals.slice(0, 2).map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </div>
         </section>
       )}
 
+      {/* COMMUNITY SECTION */}
       <section className="py-12 sm:py-16 hero-gradient">
         <div className="text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
             Join the Loveable Community
           </h2>
           <p className="text-base sm:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
-            Be the first to know about new collections, exclusive offers, and style tips.
+            Be the first to know about new collections, exclusive offers, and
+            style tips.
           </p>
           <Button asChild variant="accent" size="lg">
             <Link to="/signup">Sign Up Today</Link>

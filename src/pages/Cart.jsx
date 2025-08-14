@@ -174,13 +174,20 @@ const Cart = () => {
             </div>
 
             <Button
-              className="w-full bg-brand-charcoal hover:bg-brand-warm-gray mb-4"
-              onClick={() => navigate("/checkout")}
+              variant="outline"
+              className="w-full"
+              onClick={() =>
+                navigate("/checkout", {
+                  state: { total, cartItems },
+                })
+              }
             >
               Proceed to Checkout
             </Button>
 
-            <Button variant="outline" className="w-full" asChild>
+
+
+            <Button variant="outline" className="mt-2 w-full" asChild>
               <Link to="/products">Continue Shopping</Link>
             </Button>
           </div>
