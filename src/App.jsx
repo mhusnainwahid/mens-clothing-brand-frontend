@@ -18,6 +18,8 @@ import AuthGuard from "./routes/AuthGuard";
 import IsLogin from "./routes/IsLogin";
 import CreateProduct from "./pages/CreateProduct";
 import VendorPro from "./pages/VendorPro";
+import VendorRoutes from "./routes/privateRoutes/VendorRoutes";
+import UserRoutes from "./routes/privateRoutes/UserRoutes";
 
 const queryClient = new QueryClient();
 
@@ -30,13 +32,17 @@ const App = () => (
         <Layout>
           <Routes>
             <Route element={<AuthGuard />} >
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
+            <Route element={<><VendorRoutes/></>} >
               <Route path="/vendorpro" element={<VendorPro />} />
-              <Route path="/products/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
               <Route path="/createproduct" element={<CreateProduct />} />
+            </Route>
+            <Route element={<><UserRoutes/></>} >
+              <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+            </Route>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />          
+              <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
             </Route>
