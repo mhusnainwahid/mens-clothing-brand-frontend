@@ -67,7 +67,7 @@ const Signup = () => {
         title: "Account created successfully!",
         description: "Welcome to Loveable. You can now start shopping.",
       });
-      navigate("/login");
+      navigate("/verifyuser");
     }
   };
 
