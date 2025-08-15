@@ -20,6 +20,7 @@ import CreateProduct from "./pages/CreateProduct";
 import VendorPro from "./pages/VendorPro";
 import VendorRoutes from "./routes/privateRoutes/VendorRoutes";
 import UserRoutes from "./routes/privateRoutes/UserRoutes";
+import VerifyPage from "./pages/VerifyPage";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route element={<IsLogin/>}>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/verifyuser" element={<VerifyPage/>} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
